@@ -112,10 +112,8 @@
         <!-- Action Center Card -->
         <div class="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 p-8 md:p-12 mb-10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
             
-            <!-- Background Graphic -->
             <div class="absolute right-0 top-0 w-64 h-64 bg-gradient-to-br from-brand-50 to-emerald-50 rounded-full filter blur-[60px] opacity-70 pointer-events-none"></div>
 
-            <!-- Left: Current Status -->
             <div class="relative z-10 w-full md:w-1/2 text-center md:text-left">
                 @if($currentCalled ?? false)
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 mb-4">
@@ -139,7 +137,6 @@
                 @endif
             </div>
 
-            <!-- Right: Action Button -->
             <div class="relative z-10 w-full md:w-auto shrink-0 text-center">
                 <form method="POST" action="{{ route('admin.queue.callNext') }}" class="m-0">
                     @csrf
@@ -152,11 +149,9 @@
         </div>
 
         <!-- Organized Queue List -->
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-xl shadow-slate-200/40 overflow-hidden" id="queue-table-section">
             
-            <!-- Filters & Search Header -->
             <div class="px-6 py-4 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50/50">
-                <!-- Status Tabs (JS Hooks Added) -->
                 <div class="flex items-center gap-1 p-1 bg-slate-200/50 rounded-xl overflow-x-auto w-full md:w-auto" id="filter-tabs">
                     <button data-filter="all" class="tab-btn px-4 py-2 text-sm font-bold bg-white text-brand-600 rounded-lg shadow-sm whitespace-nowrap transition-all">All Patients</button>
                     <button data-filter="waiting" class="tab-btn px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap transition-all">Waiting</button>
@@ -164,7 +159,6 @@
                     <button data-filter="completed" class="tab-btn px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap transition-all">Completed</button>
                 </div>
 
-                <!-- Search Bar (JS Hook Added) -->
                 <div class="relative w-full md:w-64">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -173,7 +167,6 @@
                 </div>
             </div>
 
-            <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -187,14 +180,11 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100" id="queueTableBody">
                     @forelse($entries as $e)
-                        <!-- Added data-status for JS filtering -->
                         <tr class="queue-row hover:bg-slate-50/50 transition-colors group" data-status="{{ strtolower($e->status) }}">
-                            <!-- Queue Number -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="text-xl font-black text-brand-600 bg-brand-50 px-3 py-1 rounded-lg border border-brand-100 queue-num">{{ $e->queue_number }}</span>
                             </td>
                             
-                            <!-- Patient Info -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <p class="text-sm font-bold text-slate-800 patient-name">{{ $e->patient->name }}</p>
                                 <div class="flex items-center gap-2 mt-0.5">
@@ -204,7 +194,6 @@
                                 </div>
                             </td>
                             
-                            <!-- Status Badges -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($e->status === 'waiting')
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-600 border border-amber-100">
@@ -233,18 +222,15 @@
                                 @endif
                             </td>
                             
-                            <!-- Time -->
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-500">
                                 {{ $e->created_at->format('h:i A') }}
                             </td>
                             
-                            <!-- Organized Actions -->
                             <td class="px-6 py-4 whitespace-nowrap text-right">
                                 <div class="flex justify-end gap-2">
                                     
-                                    <!-- Mark as Served / Completed -->
                                     @if($e->status === 'called' || $e->status === 'serving')
-                                        <form method="POST" action="{{ route('admin.queue.serve', $e->id) }}" class="m-0">
+                                        <form method="POST" action="{{ route('admin.queue.serve', $e->id) }}" class="m-0 action-form">
                                             @csrf
                                             <button type="submit" title="Mark as Completed" class="w-9 h-9 flex items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-colors">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -252,9 +238,8 @@
                                         </form>
                                     @endif
                                     
-                                    <!-- Skip / Defer -->
                                     @if($e->status === 'waiting' || $e->status === 'called')
-                                        <form method="POST" action="{{ route('admin.queue.skip', $e->id) }}" class="m-0">
+                                        <form method="POST" action="{{ route('admin.queue.skip', $e->id) }}" class="m-0 action-form">
                                             @csrf
                                             <button type="submit" title="Skip Patient" class="w-9 h-9 flex items-center justify-center rounded-xl bg-amber-50 text-amber-600 hover:bg-amber-500 hover:text-white transition-colors">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"></path></svg>
@@ -262,18 +247,20 @@
                                         </form>
                                     @endif
                                     
-                                    <!-- Cancel Status -->
+                                    <!-- CANCEL QUEUE STATUS BUTTON -->
                                     @if($e->status === 'waiting')
-                                        <form method="POST" action="{{ route('admin.queue.cancel', $e->id) }}" class="m-0">
+                                        <form method="POST" action="{{ route('admin.queue.cancel', $e->id) }}" class="m-0 action-form" 
+                                              onsubmit="openModal(event, 'Cancel Queue Status', 'Are you sure you want to cancel this queue entry? The patient will be marked as cancelled but the record will remain.', 'Yes, Cancel Status', 'bg-gradient-to-r from-orange-500 to-orange-600 shadow-orange-500/30 hover:from-orange-600 hover:to-orange-700', 'text-orange-500 bg-orange-50 border-orange-100')">
                                             @csrf
-                                            <button type="submit" title="Cancel Queue Status" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-500 hover:text-white transition-colors">
+                                            <button type="submit" title="Cancel Queue Status" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-orange-500 hover:text-white transition-colors">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                             </button>
                                         </form>
                                     @endif
 
-                                    <!-- Hard Delete (Always available for Admin) -->
-                                    <form method="POST" action="{{ route('admin.queue.destroy', $e->id) }}" class="m-0" onsubmit="return confirm('WARNING: Are you sure you want to permanently delete this record?');">
+                                    <!-- HARD DELETE PERMANENTLY BUTTON -->
+                                    <form method="POST" action="{{ route('admin.queue.destroy', $e->id) }}" class="m-0 action-form" 
+                                          onsubmit="openModal(event, 'Permanently Delete Record', 'WARNING: Are you sure you want to permanently delete this record? This action cannot be undone and all data will be lost.', 'Delete Permanently', 'bg-gradient-to-r from-red-500 to-red-600 shadow-red-500/30 hover:from-red-600 hover:to-red-700', 'text-red-500 bg-red-50 border-red-100')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" title="Delete Permanently" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors">
@@ -296,7 +283,6 @@
                         </tr>
                     @endforelse
                     
-                        <!-- Dynamic No Results Message for JS Filter -->
                         <tr id="no-results-row" class="hidden">
                             <td colspan="5" class="px-6 py-16 text-center">
                                 <p class="text-base font-bold text-slate-700">No matching patients</p>
@@ -310,45 +296,156 @@
 
     </main>
 
+    <!-- CUSTOM CONFIRMATION MODAL -->
+    <div id="custom-modal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+        <!-- Blur Backdrop -->
+        <div id="modal-backdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-300" onclick="closeModal()"></div>
+        
+        <!-- Modal Panel -->
+        <div id="modal-panel" class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm mx-4 p-8 transform scale-95 opacity-0 transition-all duration-300">
+            <!-- Icon -->
+            <div id="modal-icon-container" class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border shadow-inner">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            
+            <h3 id="modal-title" class="text-xl font-bold text-slate-800 tracking-tight mb-2">Confirm Action</h3>
+            <p id="modal-message" class="text-slate-500 text-sm mb-8 leading-relaxed">Are you sure?</p>
+            
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button type="button" onclick="closeModal()" class="w-full sm:w-1/2 px-4 py-3 rounded-xl text-slate-600 font-bold bg-slate-100 hover:bg-slate-200 transition-colors border border-slate-200 text-sm">Cancel</button>
+                <button type="button" id="modal-confirm-btn" onclick="executeModalAction()" class="w-full sm:w-1/2 px-4 py-3 rounded-xl text-white font-bold transition-all shadow-lg hover:-translate-y-0.5 text-sm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="mt-auto py-8 text-center border-t border-slate-200 bg-white">
         <p class="text-slate-400 text-sm font-medium">&copy; 2026 Medicenter Admin Panel. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript for Functional Tabs & Search -->
+    <!-- JavaScript Base -->
     <script>
+        // ==========================================
+        // 1. CUSTOM MODAL LOGIC
+        // ==========================================
+        let formToSubmit = null;
+
+        function openModal(event, title, message, btnText, btnColorClass, iconColorClass) {
+            event.preventDefault(); // Stop form from submitting immediately
+            formToSubmit = event.target; // Save the form that was clicked
+
+            // Set Texts
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            
+            // Set Button Colors & Text
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            confirmBtn.innerText = btnText;
+            confirmBtn.className = `w-full sm:w-1/2 px-4 py-3 rounded-xl text-white font-bold transition-all shadow-lg hover:-translate-y-0.5 text-sm ${btnColorClass}`;
+
+            // Set Icon Colors (Orange for Cancel, Red for Delete)
+            const iconContainer = document.getElementById('modal-icon-container');
+            iconContainer.className = `w-16 h-16 rounded-2xl flex items-center justify-center mb-6 border shadow-inner ${iconColorClass}`;
+
+            // Show Modal Container
+            const modal = document.getElementById('custom-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Trigger Fade & Scale Animation
+            setTimeout(() => {
+                document.getElementById('modal-backdrop').classList.remove('opacity-0');
+                document.getElementById('modal-backdrop').classList.add('opacity-100');
+                
+                document.getElementById('modal-panel').classList.remove('scale-95', 'opacity-0');
+                document.getElementById('modal-panel').classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            // Animate out
+            document.getElementById('modal-backdrop').classList.remove('opacity-100');
+            document.getElementById('modal-backdrop').classList.add('opacity-0');
+            
+            document.getElementById('modal-panel').classList.remove('scale-100', 'opacity-100');
+            document.getElementById('modal-panel').classList.add('scale-95', 'opacity-0');
+            
+            // Hide container after animation
+            setTimeout(() => {
+                const modal = document.getElementById('custom-modal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                formToSubmit = null; // Clear the saved form
+            }, 300);
+        }
+
+        function executeModalAction() {
+            if (formToSubmit) {
+                // Save scroll state before final submit
+                sessionStorage.setItem('adminQueueScroll', window.scrollY);
+                formToSubmit.submit();
+            }
+        }
+
+
+        // ==========================================
+        // 2. SCROLL & FILTER MEMORY SYSTEM
+        // ==========================================
         document.addEventListener('DOMContentLoaded', function() {
+            
+            // Restore scroll position instantly if it exists
+            const savedScroll = sessionStorage.getItem('adminQueueScroll');
+            if (savedScroll) {
+                window.scrollTo({ top: parseInt(savedScroll, 10), behavior: 'instant' });
+                sessionStorage.removeItem('adminQueueScroll');
+            }
+
+            // Save scroll state for normal action buttons (Serve, Skip)
+            document.querySelectorAll('.action-form').forEach(form => {
+                // Ignore forms that trigger modals, they save scroll inside executeModalAction()
+                if (!form.hasAttribute('onsubmit')) {
+                    form.addEventListener('submit', function() {
+                        sessionStorage.setItem('adminQueueScroll', window.scrollY);
+                    });
+                }
+            });
+
+            // ==========================================
+            // 3. LIVE FILTER & TAB SYSTEM
+            // ==========================================
             const searchInput = document.getElementById('searchInput');
             const tabButtons = document.querySelectorAll('.tab-btn');
             const rows = document.querySelectorAll('.queue-row');
             const noResultsRow = document.getElementById('no-results-row');
             const emptyStateRow = document.getElementById('empty-state');
             
-            let currentFilter = 'all';
+            let currentFilter = sessionStorage.getItem('adminQueueFilter') || 'all';
             let searchQuery = '';
 
-            // 1. Handle Search Input
+            function updateTabStyles(activeFilter) {
+                tabButtons.forEach(t => {
+                    if (t.getAttribute('data-filter') === activeFilter) {
+                        t.className = "tab-btn px-4 py-2 text-sm font-bold bg-white text-brand-600 rounded-lg shadow-sm whitespace-nowrap transition-all";
+                    } else {
+                        t.className = "tab-btn px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap transition-all";
+                    }
+                });
+            }
+
             searchInput.addEventListener('input', function(e) {
                 searchQuery = e.target.value.toLowerCase();
                 filterTable();
             });
 
-            // 2. Handle Tab Clicks
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Update Active Button Styles
-                    tabButtons.forEach(t => {
-                        t.className = "tab-btn px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 whitespace-nowrap transition-all";
-                    });
-                    this.className = "tab-btn px-4 py-2 text-sm font-bold bg-white text-brand-600 rounded-lg shadow-sm whitespace-nowrap transition-all";
-                    
-                    // Update Filter State
                     currentFilter = this.getAttribute('data-filter');
+                    sessionStorage.setItem('adminQueueFilter', currentFilter);
+                    updateTabStyles(currentFilter);
                     filterTable();
                 });
             });
 
-            // 3. Main Filtering Logic
             function filterTable() {
                 let visibleCount = 0;
 
@@ -356,7 +453,6 @@
                     const status = row.getAttribute('data-status');
                     const textContent = row.textContent.toLowerCase();
                     
-                    // Logic: 'serving' tab should show both 'called' and 'serving' statuses
                     let matchesStatus = false;
                     if (currentFilter === 'all') {
                         matchesStatus = true;
@@ -369,14 +465,13 @@
                     const matchesSearch = textContent.includes(searchQuery);
 
                     if (matchesStatus && matchesSearch) {
-                        row.style.display = ''; // Show
+                        row.style.display = ''; 
                         visibleCount++;
                     } else {
-                        row.style.display = 'none'; // Hide
+                        row.style.display = 'none'; 
                     }
                 });
 
-                // Handle "No Results" display
                 if (emptyStateRow) {
                     emptyStateRow.style.display = rows.length === 0 ? '' : 'none';
                 }
@@ -387,6 +482,9 @@
                     noResultsRow.classList.add('hidden');
                 }
             }
+
+            updateTabStyles(currentFilter);
+            filterTable();
         });
     </script>
 </body>

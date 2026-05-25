@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- REMOVED THE ANNOYING META REFRESH! Replaced with invisible JS below -->
-    
     <title>Live Queue Display - Medicenter</title>
     
     <!-- Modern Font -->
@@ -65,7 +62,6 @@
             background-color: #030712; 
         }
         
-        /* High-tech grid background */
         .bg-grid-pattern {
             background-image: 
                 linear-gradient(to right, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
@@ -74,27 +70,36 @@
             background-position: center center;
         }
 
-        /* Premium Glassmorphism */
         .glass-panel {
             background: linear-gradient(145deg, rgba(15, 23, 42, 0.8) 0%, rgba(3, 7, 18, 0.95) 100%);
             backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.03);
-            border-top: 1px solid rgba(255, 255, 255, 0.08); /* Highlight edge */
+            border-top: 1px solid rgba(255, 255, 255, 0.08); 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
 
-        /* Intense glowing shadow for the big number */
         .neon-text-shadow {
             text-shadow: 0 0 60px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.4);
         }
 
-        /* Smooth scrollbar for mobile viewing */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); border-radius: 4px; }
     </style>
 </head>
 <body class="text-slate-200 antialiased min-h-screen w-full flex flex-col relative overflow-x-hidden">
+
+    <!-- Official Google Airport Chime Audio File -->
+    <audio id="chime-sound" src="https://actions.google.com/sounds/v1/alarms/ding_dong.ogg" preload="auto"></audio>
+
+    <!-- AUDIO UNLOCK OVERLAY -->
+    <div id="audio-overlay" class="fixed inset-0 z-50 bg-tv-bg/95 backdrop-blur-md flex flex-col items-center justify-center cursor-pointer transition-opacity duration-500">
+        <div class="w-24 h-24 bg-brand-500/20 rounded-full flex items-center justify-center mb-6 border border-brand-500/50 shadow-[0_0_50px_rgba(59,130,246,0.3)] animate-pulse-glow">
+            <svg class="w-12 h-12 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        </div>
+        <h2 class="text-3xl font-black text-white tracking-tight mb-2 text-center px-4">Tap anywhere to start</h2>
+        <p class="text-brand-400 font-medium uppercase tracking-widest text-sm text-center">This allows your phone to play the voice announcements</p>
+    </div>
 
     <!-- Floating Background Orbs -->
     <div class="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
@@ -132,7 +137,6 @@
         <!-- Left Side: Now Serving (Hero Section) -->
         <div class="w-full lg:w-2/3 glass-panel rounded-[2rem] lg:rounded-[3rem] flex flex-col items-center justify-center relative overflow-hidden py-16 lg:py-0 border border-slate-800">
             
-            <!-- Tech Grid Overlay -->
             <div class="absolute inset-0 bg-grid-pattern opacity-50"></div>
             
             @if($currentCalled)
@@ -142,7 +146,6 @@
                 
                 <div class="animate-pulse-glow flex flex-col items-center relative z-10 w-full px-4">
                     
-                    <!-- Neon Badge -->
                     <div class="inline-flex items-center gap-3 px-6 py-2 lg:px-8 lg:py-3 rounded-full bg-emerald-500/10 border border-emerald-400/30 shadow-[0_0_20px_rgba(16,185,129,0.2)] backdrop-blur-sm mb-6 lg:mb-10">
                         <span class="relative flex h-3 w-3 lg:h-4 lg:w-4">
                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -151,15 +154,14 @@
                         <h2 class="text-emerald-400 text-sm lg:text-xl font-black tracking-[0.3em] uppercase">Now Serving</h2>
                     </div>
 
-                    <!-- Holographic Massive Number -->
-                    <div class="text-[9rem] sm:text-[12rem] lg:text-[18rem] leading-[0.8] font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-400 neon-text-shadow tracking-tighter text-center">
+                    <!-- IMPORTANT: ADDED ID FOR JAVASCRIPT TO READ THE NUMBER -->
+                    <div id="current-serving-number" class="text-[9rem] sm:text-[12rem] lg:text-[18rem] leading-[0.8] font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-slate-400 neon-text-shadow tracking-tighter text-center">
                         {{ $currentCalled->queue_number }}
                     </div>
                     
-                    <!-- Instruction text -->
                     <div class="mt-8 lg:mt-12 bg-slate-900/50 border border-slate-700/50 px-8 py-4 rounded-2xl backdrop-blur-md">
                         <p class="text-slate-300 text-base lg:text-2xl font-bold tracking-wide text-center">
-                            Please proceed to <span class="text-brand-400">Counter 1</span>
+                            Please proceed to <span class="text-brand-400">the counter</span>
                         </p>
                     </div>
                 </div>
@@ -179,7 +181,6 @@
         <div class="w-full lg:w-1/3 flex flex-col">
             <div class="glass-panel rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-8 flex flex-col h-full border border-slate-800 relative overflow-hidden">
                 
-                <!-- Subtle top gradient line -->
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-600 to-transparent opacity-50"></div>
 
                 <div class="flex items-center gap-3 lg:gap-4 mb-6 lg:mb-8 pb-4 lg:pb-6 border-b border-slate-800">
@@ -195,15 +196,12 @@
                 <!-- Animated List -->
                 <div class="flex-grow flex flex-col gap-3 lg:gap-4 overflow-hidden relative">
                     
-                    <!-- Fade out mask at bottom -->
                     <div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-tv-card to-transparent z-10 pointer-events-none"></div>
 
                     @if(count($nextWaiting) > 0)
                         @foreach($nextWaiting as $index => $entry)
-                            <!-- Staggered slide-in animation -->
-                            <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl lg:rounded-2xl p-4 lg:p-5 flex items-center justify-between opacity-0 animate-slide-in relative overflow-hidden" style="animation-delay: {{ $index * 100 }}ms;">
+                            <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl lg:rounded-2xl p-4 lg:p-5 flex items-center justify-between opacity-0 animate-slide-in relative overflow-hidden" style="animation-delay: {{ $index * 150 }}ms;">
                                 
-                                <!-- Left colored accent bar -->
                                 <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-500 opacity-50"></div>
                                 
                                 <div class="flex items-center gap-4 lg:gap-6 pl-2 lg:pl-3">
@@ -217,7 +215,6 @@
                             </div>
                         @endforeach
                     @else
-                        <!-- Empty Queue Message -->
                         <div class="flex-grow flex flex-col items-center justify-center text-center opacity-40">
                             <svg class="w-12 h-12 text-slate-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M12 5l7 7-7 7"></path></svg>
                             <p class="text-sm lg:text-lg text-slate-400 font-bold uppercase tracking-widest">Queue is currently empty</p>
@@ -230,13 +227,11 @@
 
     <!-- News-Style Footer Ticker -->
     <footer class="flex-none bg-slate-900 border-t border-slate-800 flex items-center relative z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-        <!-- Static Badge -->
         <div class="bg-brand-600 text-white px-4 lg:px-8 py-2 lg:py-4 font-black tracking-widest uppercase text-[10px] lg:text-sm z-10 shadow-[5px_0_15px_rgba(0,0,0,0.5)] flex items-center gap-2 relative">
             <svg class="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             Announcement
         </div>
         
-        <!-- Scrolling Text -->
         <div class="overflow-hidden whitespace-nowrap flex-grow flex items-center">
             <p class="text-slate-300 text-xs lg:text-lg font-bold tracking-wide inline-block animate-[marquee_25s_linear_infinite] pl-4">
                 Please have your ID and medical records ready before approaching the counter. If you miss your number, kindly notify the reception desk immediately. Thank you for choosing Medicenter.
@@ -252,6 +247,7 @@
                 0% { transform: translateX(100%); }
                 100% { transform: translateX(-100%); }
             }
+            .fade-out { opacity: 0; pointer-events: none; }
         </style>`);
 
         // Live Clock Feature
@@ -270,41 +266,105 @@
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('clock-date').textContent = now.toLocaleDateString('en-US', options);
         }
-        
         setInterval(updateClock, 1000);
-        updateClock(); // Init immediately
+        updateClock(); 
 
         // ----------------------------------------------------
-        // SILENT INVISIBLE BACKGROUND REFRESH (NO FLASHING)
+        // AUDIO & ANNOUNCEMENT SYSTEM (FIXED FOR MOBILES)
         // ----------------------------------------------------
         let lastContent = document.getElementById('queue-main-content').innerHTML;
+        let audioEnabled = false;
+        const chimeSound = document.getElementById('chime-sound');
 
+        // 1. Wait for user to click the screen to unlock Audio (Crucial for Phones)
+        document.getElementById('audio-overlay').addEventListener('click', function() {
+            audioEnabled = true;
+            this.classList.add('fade-out'); 
+            
+            // Trick the phone into allowing the audio file by playing and immediately pausing it
+            chimeSound.volume = 0; 
+            chimeSound.play().then(() => {
+                chimeSound.pause();
+                chimeSound.currentTime = 0;
+                chimeSound.volume = 1; 
+            }).catch(e => console.log("Audio unlock error:", e));
+            
+            // Trick the phone into allowing Speech by speaking an empty string
+            window.speechSynthesis.cancel();
+            let unlockMsg = new SpeechSynthesisUtterance("");
+            unlockMsg.volume = 0; 
+            window.speechSynthesis.speak(unlockMsg);
+        });
+
+        // 2. Play Chime, wait 1.5s, then speak
+        function playChimeAndAnnounce(number) {
+            if (!audioEnabled) return;
+
+            // Step 1: Play the reliable Google audio file
+            chimeSound.currentTime = 0;
+            chimeSound.play().catch(e => console.log("Play prevented by browser:", e));
+
+            // Step 2: After 1.5 seconds (when ding dong finishes), speak the text
+            setTimeout(() => {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel(); // Clear stuck speech
+                    let text = "Calling patient number " + number + ". Please proceed to the counter.";
+                    let msg = new SpeechSynthesisUtterance(text);
+                    msg.lang = 'en-US';
+                    msg.rate = 0.85; 
+                    msg.pitch = 1;
+                    window.speechSynthesis.speak(msg);
+                }
+            }, 1500); 
+        }
+
+        // ----------------------------------------------------
+        // SILENT CACHE-BUSTING BACKGROUND REFRESH
+        // ----------------------------------------------------
         setInterval(async () => {
             try {
-                // Fetch the page silently in the background
-                const response = await fetch(window.location.href);
+                // Add ?t=timestamp to FORCE the phone to ignore cache and get fresh data
+                const url = window.location.href.split('?')[0] + '?t=' + new Date().getTime();
+                
+                const response = await fetch(url, {
+                    cache: 'no-store', 
+                    headers: { 'Pragma': 'no-cache' }
+                });
+                
                 const htmlText = await response.text();
                 
-                // Parse the downloaded HTML
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
                 
-                // Extract just the main content area
-                const newMain = doc.getElementById('queue-main-content');
+                const newMain = doc.querySelector('#queue-main-content');
                 
                 if (newMain) {
                     const newContent = newMain.innerHTML;
                     
-                    // Only update the screen if the queue data actually changed!
                     if (newContent !== lastContent) {
+                        
+                        // Extract the Old Number
+                        const oldElement = document.querySelector('#current-serving-number');
+                        const oldNumber = oldElement ? oldElement.innerText.trim() : null;
+                        
+                        // Extract the New Number
+                        const newElement = doc.querySelector('#current-serving-number');
+                        const newNumber = newElement ? newElement.innerText.trim() : null;
+
+                        // Update the screen instantly
                         document.getElementById('queue-main-content').innerHTML = newContent;
                         lastContent = newContent;
+
+                        // If the new number is different, play sound!
+                        if (newNumber && newNumber !== oldNumber) {
+                            playChimeAndAnnounce(newNumber);
+                        }
                     }
                 }
             } catch (error) {
                 console.error("Background sync failed:", error);
             }
-        }, 5000); // Checks for updates every 5 seconds invisibly
+        }, 3000); // Check every 3 seconds for faster response
     </script>
 </body>
 </html>
